@@ -1,4 +1,4 @@
-用Intellij IDEA打开，启动后在浏览器里输入：
+锘跨敤Intellij IDEA鎵撳紑锛屽惎鍔ㄥ悗鍦ㄦ祻瑙堝櫒閲岃緭鍏ワ細
 http://localhost:8080/api/samples/v0.1/roles
 http://localhost:8080/api/samples/v0.1/roles/60623F69-6361-4386-BD8E-1F9ED9A6BC21
 http://localhost:8080/api/samples/v0.1/roles/60623F69-6361-4386-BD8E-1F9ED9A6BC21/users
