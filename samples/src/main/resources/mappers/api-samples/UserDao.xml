@@ -1,0 +1,45 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huitu.api.samples.user.dao.UserDao">
+
+
+    <select id="selectById" resultType="java.util.HashMap">
+          select id tenantId,'sys_user'tenantName,
+            ID,
+            USERNAME,
+            LOCKED
+          from sys_user
+          where id = '${id}'
+    </select>
+
+    <select id="selectByIds" resultType="java.util.HashMap">
+        select id tenantId,'sys_user'tenantName,
+        ID,
+        USERNAME,
+        LOCKED
+        from sys_user
+        where id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectAll" resultType="java.util.HashMap">
+        select id tenantId,'sys_user'tenantName,
+        ID,
+        USERNAME,
+        LOCKED
+        from sys_user
+    </select>
+
+    <select id="selectByRoleId" resultType="java.util.HashMap">
+        select id tenantId,'sys_user'tenantName,
+        ID,
+        USERNAME,
+        LOCKED
+        from sys_user
+        where id  in (select user_id from sys_user_role where role_id='${roleId}' )
+    </select>
+</mapper>
