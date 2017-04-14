@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.curd.dao.EmployeeDao">
+  <resultMap id="BaseResultMap" type="com.mybatis.curd.entities.Employee">
+
+    <id column="eid" jdbcType="INTEGER" property="eid" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="did" jdbcType="INTEGER" property="did" />
+    <result column="comments" jdbcType="VARCHAR" property="comments" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from employee
+    where eid = #{eid,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateByPrimaryKey" parameterType="com.mybatis.curd.entities.Employee">
+    update employee
+    set ename = #{ename,jdbcType=VARCHAR},
+      did = #{did,jdbcType=INTEGER},
+      comments = #{comments,jdbcType=VARCHAR},
+      ts = #{ts,jdbcType=TIMESTAMP}
+    where eid = #{eid,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select eid, ename, did, comments, ts
+    from employee
+    where eid = #{eid,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select eid, ename, did, comments, ts
+    from employee
+  </select>
+
+  <!-- ======================********************************************************************====================== -->
+  <!-- ======================********************************************************************====================== -->
+  <!-- foreach(循环List<String>参数) - 作为where中in的条件 -->
+  <select id="getByEidList" resultType="java.util.HashMap">
+    SELECT * FROM employee emp
+    WHERE emp.eid IN
+    <foreach collection="list" item="eidList"  open="(" separator="," close=")">
+      #{eidList}
+    </foreach>
+  </select>
+
+    <!-- foreach(循环array参数) - 作为where中in的条件 -->
+    <select id="getEmpListByEid_foreach_array" resultType="java.util.HashMap">
+      SELECT *  FROM employee emp
+      WHERE emp.eid IN
+      <foreach collection="array" item="empEids"  open="(" separator="," close=")">
+        #{empEids}
+      </foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.mybatis.curd.entities.Employee" useGeneratedKeys="true" keyProperty="eid">
+      insert into employee (eid, ename, did,
+      comments, ts)
+      values (#{eid,jdbcType=INTEGER}, #{ename,jdbcType=VARCHAR}, #{did,jdbcType=INTEGER},
+      #{comments,jdbcType=VARCHAR}, #{ts,jdbcType=TIMESTAMP})
+    </insert>
+
+  <select id="selectAllBy" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    select eid, ename, did, comments, ts
+    from employee emp
+    WHERE 1=1
+    <if test="ename !=null and ename != '' ">
+      AND emp.ename LIKE CONCAT(CONCAT('%', #{ename, jdbcType=VARCHAR}),'%')
+    </if>
+  </select>
+
+  <!--  if/trim代替where(判断参数) - 将实体类不为空的属性作为where条件 -->
+  <select id="getEmpList_if_trim"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT * FROM employee emp
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+      <if test="ename !=null and ename != '' ">
+        emp.ename LIKE CONCAT(CONCAT('%', #{ename, jdbcType=VARCHAR}),'%')
+      </if>
+      <if test="comments != null and comments != '' ">
+        AND emp.comments = #{comments, jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <!--  if/set(判断参数) - 将实体类不为空的属性更新 -->
+  <update id="updateEmp_if_set" parameterType="java.util.HashMap">
+    UPDATE employee
+    <set>
+      <if test="ename != null and ename != '' ">
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="did != null and did != '' ">
+        did = #{did,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null and comments !='' ">
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="ts != null and ts != '' ">
+        ts = #{ts,jdbcType=TIMESTAMP}
+      </if>
+    </set>
+    WHERE eid = #{eid}
+  </update>
+
+  <!-- delete与foreach的配合使用  集合传参  数组传参 批量删除 index="index" -->
+  <delete id="batchDeleteByPriKey" parameterType="java.lang.Integer">
+    delete from employee where eid IN
+    <foreach collection="list" item="eids" open="(" separator="," close=")">
+      #{eids}
+    </foreach>
+  </delete>
+
+  <delete id="batchDeleteByPriKeyArr" parameterType="java.lang.Integer">
+    delete from employee where eid IN
+    <foreach collection="array" item="eids" open="(" separator="," close=")">
+      #{eids}
+    </foreach>
+  </delete>
+
+  <!-- update与foreach的配合使用  集合传参  数组传参 批量update  -->
+  <update id="updateBatchByEids"  parameterType="java.lang.Integer">
+    UPDATE employee set did = 7,ts=now()
+    where eid in
+    <foreach collection="array" item="eids" open="(" separator="," close=")">
+      #{eids}
+    </foreach>
+  </update>
+  <update id="updateBatchByEidsList"  parameterType="java.lang.Integer">
+    UPDATE employee set did = 3,ts=now()
+    where eid in
+    <foreach collection="list" item="eids" open="(" separator="," close=")">
+      #{eids}
+    </foreach>
+  </update>
+  <update id="updateBatchByEidsMap"  parameterType="java.util.HashMap">
+    UPDATE employee set did = 5,ts = now()
+    where eid in
+    <foreach collection="params.keys" item="eids" open="(" separator="," close=")">
+      #{params[${eids}]}
+    </foreach>
+  </update>
+
+  <!--  choose (when, otherwise) -->
+
+  <!-- sql片断 -->
+  <sql id="sql01">e.eid,e.ename,d.dname,e.ts</sql>
+
+  <!-- 多表联合查询  大于号  小于号  转义  -->
+  <select id="selectInnerJoin" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT <include refid="sql01"></include> from employee e INNER JOIN dept d on e.did=d.did
+    WHERE 1=1
+    <if test="bgts !=null and bgts != '' ">
+      AND e.ts &lt;=#{bgts}
+    </if>
+    <if test="edts !=null and edts != '' ">
+      AND e.ts &gt;=#{edts}
+    </if>
+    order by e.ts desc
+  </select>
+
+  <!-- 批量插入 -->
+  <insert id="batchInsert" parameterType="com.mybatis.curd.entities.Employee">
+    insert into employee (ename, did,comments, ts)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.ename}, #{item.did},#{item.comments}, #{item.ts})
+    </foreach>
+  </insert>
+
+</mapper>

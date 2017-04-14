@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.curd.dao.DeptDao">
+  <resultMap id="BaseResultMap" type="com.mybatis.curd.entities.Dept">
+    <id column="did" jdbcType="INTEGER" property="did" />
+    <result column="dname" jdbcType="VARCHAR" property="dname" />
+    <result column="comments" jdbcType="VARCHAR" property="comments" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from dept
+    where did = #{did,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.mybatis.curd.entities.Dept">
+    insert into dept (dname, comments,
+      ts)
+    values (#{dname,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR},
+      #{ts,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.mybatis.curd.entities.Dept">
+    update dept
+    set dname = #{dname,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=VARCHAR},
+      ts = #{ts,jdbcType=TIMESTAMP}
+    where did = #{did,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select did, dname, comments, ts
+    from dept
+    where did = #{did,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select did, dname, comments, ts
+    from dept
+  </select>
+
+
+  <!-- ======================********************************************************************====================== -->
+  <!-- ======================********************************************************************====================== -->
+  <!--传入的是map对象，会自动取map中相同名的值    parameterType="map"-->
+  <select id="findAll" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    select * from dept
+    <where>
+      1=1
+      <if test="did!=null and did!='' ">
+        AND did = #{did}
+      </if>
+      <if test="dname!=null and dname!='' ">
+        AND dname = #{dname}
+      </if>
+      <if test="comments!=null and comments!='' ">
+        AND comments = #{comments}
+      </if>
+    </where>
+  </select>
+
+  <!-- 更新部门信息 用实体类传参 -->
+  <update id="updateDeptById" parameterType="com.mybatis.curd.entities.Dept">
+    UPDATE dept
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="dname!=null and dname!='' ">
+        dname= #{dname},
+      </if>
+      <if test="comments!=null and comments!=''  ">
+        comments = #{comments},
+      </if>
+      <if test="ts!=null and ts!=''  ">
+        ts = #{ts}
+      </if>
+    </trim>
+    WHERE did = #{did};
+  </update>
+
+  <!-- 更新部门信息 用map传参 -->
+  <update id="updateDeptByIdMap" parameterType="java.util.HashMap">
+    UPDATE dept
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="dname!=null and dname!='' ">
+        dname= #{dname},
+      </if>
+      <if test="comments!=null and comments!=''  ">
+        comments = #{comments},
+      </if>
+      <if test="ts!=null and ts!=''  ">
+        ts = #{ts}
+      </if>
+    </trim>
+    WHERE did = #{did};
+  </update>
+
+</mapper>

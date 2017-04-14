@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!--导入属性配置 -->
+    <!--<properties resource="${targetJavaProject}/resources/config/generator.properties"/>-->
+    <!--指定特定数据库的jdbc驱动jar包的位置 -->
+    <classPathEntry
+            location="F:/testIDEAProject/mybatisDemo/repo/mysql-connector-java-5.1.39.jar"/>
+
+    <context id="default" targetRuntime="MyBatis3Simple">
+        <!--<property name="javaFileEncoding" value="UTF-8" />-->
+        <!--<plugin type="com.huitu.mybatis.extensions.ModelPlugin">-->
+            <!--<property name="addSerializableField" value="false"/>-->
+            <!--<property name="addXmlRootElement" value="false" />-->
+            <!--<property name="implementInterface" value="java.io.Serializable" />-->
+        <!--</plugin>-->
+        <!--<plugin type="com.huitu.mybatis.extensions.RenamePlugin">-->
+            <!--<property name="mybatisMethodSuffix" value="Criteria"/>-->
+            <!--<property name="persistenceObjectSuffix" value="Dao"/>-->
+            <!--<property name="queryObjectSuffix" value="Criteria"/>-->
+        <!--</plugin>-->
+
+        <!--去除注释  -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+            <property name="suppressDate" value="true" />
+        </commentGenerator>
+
+        <!--jdbc的数据库连接 -->
+        <jdbcConnection
+                driverClass="com.mysql.jdbc.Driver"
+                connectionURL="jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true"
+                userId="root"
+                password="root">
+        </jdbcConnection>
+
+        <javaTypeResolver >
+            <!-- 指定生成的类型为java类型，避免数据库中number等类型字段 -->
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <javaModelGenerator
+                targetPackage="com.mybatis.curd.entities"
+                targetProject=".\src\main\java">
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <sqlMapGenerator
+                targetPackage="com.mybatis.curd.dao.mapping"
+                targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="false" />
+        </sqlMapGenerator>
+
+        <javaClientGenerator
+                targetPackage="com.mybatis.curd.dao"
+                targetProject=".\src\main\java"
+                type="XMLMAPPER">
+            <property name="methodNameCalculator" value="extended"/>
+            <property name="enableSubPackages" value="false" />
+        </javaClientGenerator>
+
+        <!--<table
+                tableName="st_stbprp_b"
+                domainObjectName="stinfo"
+                enableInsert="false"
+                enableSelectByExample="true"
+                enableSelectByPrimaryKey="true"
+                enableUpdateByExample="false"
+                enableUpdateByPrimaryKey="false"
+                enableCountByExample="false"
+                enableDeleteByExample="false"
+                enableDeleteByPrimaryKey="false"
+                >
+            <ignoreColumn column="fritm" />
+
+            <columnOverride column="addvcd" property="adnm"/>
+            <columnOverride column="lgtd" javaType="String"/>
+        </table>-->
+        <table  tableName="employee" domainObjectName="Employee" mapperName="EmployeeDao"
+                enableCountByExample="false" enableUpdateByExample="false"
+                enableDeleteByExample="false" enableSelectByExample="false"
+                selectByExampleQueryId="false">
+          <!--  <columnOverride column="abstract" property="abst"/>-->
+        </table>
+
+    </context>
+</generatorConfiguration>

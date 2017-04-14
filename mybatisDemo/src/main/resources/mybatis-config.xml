@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 加载数据库文件jdbc.properties -->
+    <properties resource="jdbc.properties">
+        <!-- properties中还可以配置一些属性名和属性值,此处的优先加载 -->
+        <!-- <property name="driver" value=""/> -->
+    </properties>
+    <!--要想控制台输出sql语句及参数：方式二：要加上settings这段代码  方式一见log4j.properties中的注释-->
+    <!-- 注意：这里面写标签有顺序，不能随便乱放，否则会报错 <settings>一定要加在<properties>之后且<typeAliases>之前 -->
+    <!-- 网上有人说这里写value="LOG4J"  但是经过试验，这样写控制台不会输出sql语句 原因未知 -->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+    <!-- 环境 --><!-- 和spring整合后 environments配置将废除-->
+    <environments default="development">
+        <environment id="development">
+            <!-- 事务管理   jdbc -->
+            <transactionManager type="JDBC"/>
+            <!-- 数据源：数据库连接池 -->
+            <dataSource type="POOLED">
+                <!-- 驱动 -->
+                <property name="driver" value="${jdbc.driver}"/>
+                <!-- 资源 -->
+                <property name="url" value="${jdbc.url}"/>
+                <!-- 数据库的用户名 -->
+                <property name="username" value="${jdbc.username}"/>
+                <!-- 数据库的用户的密码 -->
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- mybatis映射的不在是对象了，而是sql -->
+    <mappers>
+        <mapper resource="mappers/DeptDao.xml"/>
+        <mapper resource="mappers/EmployeeDao.xml"/>
+    </mappers>
+
+
+</configuration>
